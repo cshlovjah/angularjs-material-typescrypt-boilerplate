@@ -25,7 +25,7 @@ export class AuthService {
          const authAnswer: IHttpResponse<any> = await this.login(credentials);
 
          let success: boolean = authAnswer.data.success
-         if(authAnswer.data.success === true){
+         if(success === true){
            this.saveToken(authAnswer.data.token);
          } else {
            console.log("Njt")
