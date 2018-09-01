@@ -4,7 +4,8 @@ import { AuthService } from './auth.service';
 class AuthCtrl {
    constructor(
       private $rootScope: ng.IRootScopeService,
-      private authService: AuthService
+      private authService: AuthService,
+      public _: any
    ) {
    }
 
@@ -23,7 +24,7 @@ class AuthCtrl {
    };
 }
 
-AuthCtrl.$inject = ["$rootScope", "authService"];
+AuthCtrl.$inject = ["$rootScope", "authService", "_"];
 
 export default {
    bindings: {},
