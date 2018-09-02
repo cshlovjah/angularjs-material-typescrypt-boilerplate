@@ -20,16 +20,12 @@ class MainCtrl {
         
         this.$rootScope.$on('isLogin', (event, args) => {
             this.AuthState = args.success
-            console.log("islogin ev: ", event, " ", args)
         });
         
-        //console.log("rootScope ", this.$rootScope)
 
     }
 
     $onInit(): void {
-      //  this.AuthState = this.auth();
-       // console.log(this.AuthState)
     }
 
     currentTheme: string = "green";
