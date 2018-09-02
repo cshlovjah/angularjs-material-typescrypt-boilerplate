@@ -25,12 +25,11 @@
                     <md-icon>menu</md-icon>
                 </md-button>
                 <h2 flex>{{$ctrl.title}}</h2>
+                <md-button class="md-icon-button" aria-label="Logout" ng-click="$ctrl.logout()">
+                    <md-icon>exit_to_app</md-icon>
+                </md-button>
             </div>
         </md-toolbar>
-
-        <!-- <md-content> -->
-            <ng-view></ng-view>
-        <!-- </md-content> -->
-
+        <ng-view></ng-view>
     </div>
 </div>

@@ -1,38 +1,79 @@
-import { IAuthCredentials, IAuthToken } from './auth.interfaces';
-import { IHttpResponse } from 'angular';
+import { IAuthCredentials, IAuthToken } from "./auth.interfaces";
+import { IHttpResponse } from "angular";
+
 export class AuthService {
-   static $inject = ["$http", "API_ENDPOINT"];
+  static $inject: string[] = ["$http", "$location", "API_ENDPOINT"];
 
-   constructor(public $http: ng.IHttpService, private API_ENDPOINT: string) {
-      this.$http = $http;
-      this.API_ENDPOINT = API_ENDPOINT;
-   }
-   token: string = ''
+  constructor(
+    private $http: ng.IHttpService,
+    public $location: ng.ILocationService,
+    public API_ENDPOINT: string
+  ) {
+    this.$http = $http;
+    this.$location = $location;
+    this.API_ENDPOINT = API_ENDPOINT;
+  }
+  token: IAuthToken;
 
-   public saveToken(token: string) {
-     localStorage.setItem('mtoken', token);
-     token = token;
-   }
+  public getToken(): any {
+    let token: string;
+    if (!this.token) {
+      token = localStorage.getItem("mtoken");
+    }
+    return JSON.parse(token);
+  }
 
-   public login (credentials: IAuthCredentials) {
-      return this.$http.post(
-         this.API_ENDPOINT + "/auth",
-         credentials
-       );
-   }
-   public async request(credentials: IAuthCredentials) {
+  public saveToken(token: IAuthToken) {
+    localStorage.setItem("mtoken", JSON.stringify(token));
+    //worked
+    //this.$location.path('/');
+  }
+
+  public removeToken(): any {
+    console.log("Remove token");
+    localStorage.removeItem("mtoken");
+  }
+
+  public isLoggedIn(): boolean {
+    const user = this.getUserDetails();
+    if (user) {
+      return user.exp > Date.now() / 1000;
+    } else {
+      return false;
+    }
+  }
+
+  public getUserDetails(): any {
+    const token: IAuthToken = this.getToken();
+    let payload;
+    if (token) {
+      payload = token.token.split(".")[1];
       try {
-         const authAnswer: IHttpResponse<any> = await this.login(credentials);
+        payload = atob(payload);
+        console.log("payload ", payload);
+      } catch (err) {
+        console.log("Error ", err);
+        return err
+      }
 
-         let success: boolean = authAnswer.data.success
-         if(success === true){
-           this.saveToken(authAnswer.data.token);
-         } else {
-           console.log("Njt")
-         }
-         
-       } catch (err) {
-         console.log(err);
-       };
-   } 
+      return JSON.parse(payload);
+    } else {
+      return null;
+    }
+  }
+
+  public logout() {
+    console.log("Service Logout");
+    this.removeToken();
+   // this.$location.path('/');
+  }
+
+  public login(credentials: IAuthCredentials) {
+    return this.$http.post(
+      this.API_ENDPOINT + "/api/authenticate",
+      credentials
+    );
+  }
 }
+
+

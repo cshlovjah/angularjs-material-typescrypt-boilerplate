@@ -1,33 +1,53 @@
-import { IAuthCredentials } from './auth.interfaces';
-import { AuthService } from './auth.service';
+import { AuthService } from "./auth.service";
+import { IAuthCredentials, IAuthToken } from "./auth.interfaces";
+import { IHttpResponse } from "angular";
 
 class AuthCtrl {
-   constructor(
-      private $rootScope: ng.IRootScopeService,
-      private authService: AuthService,
-      public _: any
-   ) {
-   }
+  constructor(
+    private $rootScope: ng.IRootScopeService,
+    public $location: ng.ILocationService,
+    private authService: AuthService,
+    public _: any
+  ) {}
 
-   $onInit() {
-   }
+  $onInit() {}
 
-   loginModel: IAuthCredentials = {
-      username: "",
-      password: ""
-   };
+  loginModel: IAuthCredentials = {
+    username: "",
+    password: ""
+  };
 
-   sendCredentials() {
-      console.log(this.loginModel);
-      //Send user credentials to autService
-      this.authService.request(this.loginModel);
-   };
+  public logout() {
+    console.log("Service Logout");
+    this.authService.removeToken();
+    this.$location.path('/');
+  }
+
+  public sendCredentials() {
+    this.authService.login(
+      this.loginModel
+    ).then((authAnswer: IHttpResponse<any>)=>{
+      let success: boolean = authAnswer.data.success;
+
+      if (success === true) {
+        let user: IAuthToken = {
+          username: authAnswer.data.username,
+          token: authAnswer.data.token
+        };
+        console.log("Success true ", user);
+        this.authService.saveToken(user);
+        this.$location.path('/');
+      } else {
+        console.log("Error login");
+      }
+    });
+  }
 }
 
-AuthCtrl.$inject = ["$rootScope", "authService", "_"];
+AuthCtrl.$inject = ["$rootScope", "$location", "authService", "_"];
 
 export default {
-   bindings: {},
-   templateUrl: require("./auth.html"),
-   controller: AuthCtrl
-}
+  bindings: {},
+  templateUrl: require("./auth.html"),
+  controller: AuthCtrl
+};

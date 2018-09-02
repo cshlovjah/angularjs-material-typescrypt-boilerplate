@@ -10,10 +10,10 @@ import * as _ from "underscore";
 import "./assets/style.scss";
 import routes from "./app.routes";
 import mainModule from "./app/main/main.module";
-import settingsModule from "./app/settings/settings.module";
 import homeModule from "./app/home/home.module";
+import dashboardModule from "./app/dashboard/dashboard.module";
 import authModule from "./app/auth/auth.module";
-
+import { AuthService } from "./app/auth/auth.service";
 
 angular.module("app", [
   ngRoute,
@@ -22,8 +22,8 @@ angular.module("app", [
   ngMaterial,
   hmTouchEvents,
   mainModule,
-  settingsModule,
   homeModule,
+  dashboardModule,
   authModule
 ]);
 angular.module("app").config(routes);
@@ -45,7 +45,6 @@ angular.module("app").config([
   }
 ]);
 
-//https://docs.angularjs.org/guide/production
 angular.module("app").config([
   "$compileProvider",
   function($compileProvider) {
@@ -55,12 +54,34 @@ angular.module("app").config([
   }
 ]);
 
-angular.module("app")
-    .constant('_', (<any>window)._ = _)
-    .run(function ($rootScope) {
-        $rootScope._ = (<any>window)._ = _;
-     });
-angular.bootstrap(document, ["app"]);
 
-//https://github.com/vsternbach/angularjs-typescript-webpack
-//http://ryanmullins.github.io/angular-hammer/
+angular
+  .module("app")
+  .constant("_", ((<any>window)._ = _))
+  .service("AuthService", AuthService)
+  .run([
+    "$rootScope",
+    "AuthService",
+    "$location",
+    function($rootScope, AuthService, $location) {
+      $rootScope._ = (<any>window)._ = _;
+
+      $rootScope.$on("$routeChangeStart", function(event) {
+        console.log("Event fire ")
+        if (!AuthService.isLoggedIn()) {
+          console.log("DENY");
+          $location.path("/auth");
+        } else {
+          console.log("ALLOW");
+          if ($location.path() === "/auth") {
+            $location.path("/");
+            event.preventDefault();
+          }
+        }
+      });
+    }
+  ]);
+
+
+
+angular.bootstrap(document, ["app"]);
