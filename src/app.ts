@@ -70,9 +70,15 @@ angular
         console.log("Event fire ")
         if (!AuthService.isLoggedIn()) {
           console.log("DENY");
+          $rootScope.$broadcast('isLogin', {
+            success: false
+          });
           $location.path("/auth");
         } else {
           console.log("ALLOW");
+          $rootScope.$broadcast('isLogin', {
+            success: true
+          });
           if ($location.path() === "/auth") {
             $location.path("/");
             event.preventDefault();

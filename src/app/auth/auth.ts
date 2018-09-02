@@ -17,13 +17,13 @@ class AuthCtrl {
     password: ""
   };
 
-  public logout() {
+  public logout(): void {
     console.log("Service Logout");
     this.authService.removeToken();
     this.$location.path('/');
   }
 
-  public sendCredentials() {
+  public sendCredentials(): void {
     this.authService.login(
       this.loginModel
     ).then((authAnswer: IHttpResponse<any>)=>{

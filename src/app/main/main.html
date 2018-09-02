@@ -1,9 +1,9 @@
 <div md-theme="{{$ctrl.currentTheme}}" layout="row" flex hm-swiperight="$ctrl.openNav()" hm-swipeleft="$ctrl.closeNav()">
 
-    <md-sidenav class="md-whiteframe-z2" md-component-id="left">
+    <md-sidenav class="md-whiteframe-z2" md-component-id="left" ng-show="$ctrl.AuthState">
         <md-toolbar class="md-tall">
             <div class="md-toolbar-tools">
-                ToolbarInfo
+                Welcome
             </div>
         </md-toolbar>
 
@@ -19,7 +19,7 @@
     </md-sidenav>
 
     <div flex>
-        <md-toolbar>
+        <md-toolbar ng-show="$ctrl.AuthState">
             <div class="md-toolbar-tools">
                 <md-button ng-click="$ctrl.toggleNav()" class="md-icon-button">
                     <md-icon>menu</md-icon>

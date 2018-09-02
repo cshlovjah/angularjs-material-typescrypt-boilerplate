@@ -7,6 +7,7 @@ interface IMenu {
 class MainCtrl {
     constructor(
         private $scope: ng.IScope,
+        public $rootScope: ng.IRootScopeService,
         private $mdSidenav: ng.material.ISidenavService,
         public $location: ng.ILocationService,
         public $window: ng.IWindowService,
@@ -16,11 +17,19 @@ class MainCtrl {
         this.$scope.$on('update-theme', (event, args) => {
             this.currentTheme = args;
         });
+        
+        this.$rootScope.$on('isLogin', (event, args) => {
+            this.AuthState = args.success
+            console.log("islogin ev: ", event, " ", args)
+        });
+        
+        //console.log("rootScope ", this.$rootScope)
+
     }
 
     $onInit(): void {
-        this.AuthState = this.auth();
-        console.log(this.AuthState)
+      //  this.AuthState = this.auth();
+       // console.log(this.AuthState)
     }
 
     currentTheme: string = "green";
@@ -59,7 +68,7 @@ class MainCtrl {
     }
 }
 
-MainCtrl.$inject = ["$scope", "$mdSidenav", "$location", "$window", "AuthService"];
+MainCtrl.$inject = ["$scope", "$rootScope", "$mdSidenav", "$location", "$window", "AuthService"];
 
 export default {
     bindings: { title: "=" },
